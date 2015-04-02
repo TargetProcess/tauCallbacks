@@ -1,0 +1,26 @@
+{
+  "name": "tauCallbacks",
+  "version": "0.1.0",
+  "description": "",
+  "main": "callbacks.js",
+  "scripts": {
+    "test" : "jasmine-node ./tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TargetProcess/tauCallbacks"
+  },
+  "keywords": [
+    "emitter",
+    "callbacks"
+  ],
+  "author": "taucraft",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Targetprocess/tauCallbacks/issues"
+  },
+  "homepage": "https://github.com/Targetprocess/tauCallbacks",
+  "dependencies": {
+    "underscore": "~1.8.2"
+  }
+}
