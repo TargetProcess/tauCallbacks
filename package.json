@@ -1,10 +1,10 @@
 {
-  "name": "tauCallbacks",
+  "name": "tau-callbacks",
   "version": "0.1.0",
   "description": "",
   "main": "callbacks.js",
   "scripts": {
-    "test" : "jasmine-node ./tests"
+    "test": "jasmine-node ./tests"
   },
   "repository": {
     "type": "git",
