@@ -1,7 +1,18 @@
-var _ = require('underscore');
-
-module.exports = (function() {
+(function (root, factory) {
     'use strict';
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['underscore'], factory);
+    } else if (typeof exports === 'object') {
+        // Node, CommonJS-like
+        module.exports = factory(require('underscore'));
+    } else {
+        // Browser globals (root is window)
+        root.Callbacks = factory(_);
+    }
+}(this, function (_) {
+    'use strict';
+
     /**
      * @class Callbacks
      * @constructor
@@ -137,4 +148,4 @@ module.exports = (function() {
     Callbacks.prototype.trigger = Callbacks.prototype.fire;
 
     return Callbacks;
-})();
+}));
