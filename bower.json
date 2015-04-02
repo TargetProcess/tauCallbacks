@@ -1,0 +1,19 @@
+{
+  "name": "tau-callbacks",
+  "version": "0.1.0",
+  "homepage": "https://github.com/TargetProcess/tauCallbacks",
+  "authors": [
+    "taucraft"
+  ],
+  "main": "callbacks.js",
+  "keywords": [
+    "emitter",
+    "callbacks"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "/*",
+    "!LICENSE",
+    "!callbacks.js"
+  ]
+}
