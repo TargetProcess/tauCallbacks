@@ -1,16 +1,17 @@
+/*global define, module, exports*/
 (function (root, factory) {
     'use strict';
     if (typeof define === 'function' && define.amd) {
         // AMD
-        define(['underscore'], factory);
+        define(factory);
     } else if (typeof exports === 'object') {
         // Node, CommonJS-like
-        module.exports = factory(require('underscore'));
+        module.exports = factory();
     } else {
         // Browser globals (root is window)
-        root.Callbacks = factory(_);
+        root.Callbacks = factory();
     }
-}(this, function (_) {
+}(this, function () {
     'use strict';
 
     /**
@@ -68,7 +69,7 @@
          */
         fire: function(args) {
             if (this._subscriptions.length) {
-                args = _.toArray(arguments);
+                args = Array.prototype.slice.call(arguments);
 
                 if (this._bufferEntries > 0) {
                     this._bufferArguments = args;
@@ -93,7 +94,7 @@
          * @returns {Callbacks}
          */
         remove: function(handler, scope) {
-            if (_.isFunction(handler)) {
+            if (typeof handler == 'function' || false) {
                 this._removeHandler(handler, scope);
             } else {
                 scope = handler;
@@ -121,10 +122,19 @@
         },
 
         _findHandlerIndex: function(handler, scope) {
-            return _.findIndex(this._subscriptions, function(subscription) {
+            var predicate = function (subscription) {
                 return subscription.scope === scope &&
                     (subscription.handler === handler || subscription.originalHandler === handler);
-            });
+            };
+
+            var length = this._subscriptions.length;
+            for (var index = 0; index >= 0 && index < length; index += 1) {
+                if (predicate(this._subscriptions[index])) {
+                    return index;
+                }
+            }
+
+            return -1;
         },
 
         _removeHandler: function(handler, scope) {
@@ -135,9 +145,13 @@
         },
 
         _removeScope: function(scope) {
-            this._subscriptions = _.reject(this._subscriptions, function(subscription) {
-                return subscription.scope === scope;
-            });
+            this._subscriptions = this._subscriptions
+                .reduce(function(memo, subscription) {
+                    if (subscription.scope !== scope) {
+                        memo.push(subscription);
+                    }
+                    return memo;
+                }, []);
         }
     };
 

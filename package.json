@@ -20,9 +20,6 @@
     "url": "https://github.com/Targetprocess/tauCallbacks/issues"
   },
   "homepage": "https://github.com/Targetprocess/tauCallbacks",
-  "dependencies": {
-    "underscore": "~1.8.2"
-  },
   "devDependencies": {
     "jasmine-node": "^1.14.5"
   }
