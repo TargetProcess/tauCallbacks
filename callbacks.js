@@ -94,7 +94,7 @@
          * @returns {Callbacks}
          */
         remove: function(handler, scope) {
-            if (typeof handler == 'function' || false) {
+            if (typeof handler === 'function') {
                 this._removeHandler(handler, scope);
             } else {
                 scope = handler;
@@ -122,19 +122,10 @@
         },
 
         _findHandlerIndex: function(handler, scope) {
-            var predicate = function (subscription) {
+            return this._findIndex(this._subscriptions, function (subscription) {
                 return subscription.scope === scope &&
                     (subscription.handler === handler || subscription.originalHandler === handler);
-            };
-
-            var length = this._subscriptions.length;
-            for (var index = 0; index >= 0 && index < length; index += 1) {
-                if (predicate(this._subscriptions[index])) {
-                    return index;
-                }
-            }
-
-            return -1;
+            });
         },
 
         _removeHandler: function(handler, scope) {
@@ -146,12 +137,19 @@
 
         _removeScope: function(scope) {
             this._subscriptions = this._subscriptions
-                .reduce(function(memo, subscription) {
-                    if (subscription.scope !== scope) {
-                        memo.push(subscription);
-                    }
-                    return memo;
-                }, []);
+                .filter(function(subscription) {
+                    return subscription.scope !== scope;
+                });
+        },
+
+        _findIndex: function(array, predicate) {
+            for (var index = 0, length = array.length; index < length; index += 1) {
+                if (predicate(array[index])) {
+                    return index;
+                }
+            }
+
+            return -1;
         }
     };
 
