@@ -1,7 +1,7 @@
 {
   "name": "tau-callbacks",
   "version": "0.1.0",
-  "description": "",
+  "description": "A multi-purpose callbacks list object that provides a powerful way to manage callback lists. Inspired by jQuery.",
   "main": "callbacks.js",
   "scripts": {
     "test": "jasmine-node ./tests"
