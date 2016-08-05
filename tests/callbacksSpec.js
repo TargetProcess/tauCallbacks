@@ -1,8 +1,9 @@
-var _ = require('underscore'),
-    Callbacks = require('../callbacks');
+/*global describe, it, expect*/
+var _ = require('underscore');
+var Callbacks = require('../callbacks');
 
-describe('Callbacks', function () {
-    it('should provide fluent interface', function (done) {
+describe('Callbacks', function() {
+    it('should provide fluent interface', function(done) {
         var callbacks = new Callbacks();
 
         var basicMethods = ['add', 'fire', 'remove', 'empty'];
@@ -11,10 +12,10 @@ describe('Callbacks', function () {
 
         var methods = _.flatten([basicMethods, methodAliases, additionalMethods]);
 
-        _.each(methods, function (methodName) {
+        _.each(methods, function(methodName) {
             expect(_.isFunction(callbacks[methodName])).toBeTruthy();
 
-            var result = callbacks[methodName](function () {
+            var result = callbacks[methodName](function() {
             });
             expect(result).toBe(callbacks);
         });
@@ -23,11 +24,11 @@ describe('Callbacks', function () {
 });
 
 describe('add', function() {
-    it('should preserve scope', function (done) {
+    it('should preserve scope', function(done) {
         expect(2);
 
         var object = {
-            callback: function (data) {
+            callback: function(data) {
                 expect(data).toEqual('data');
                 expect(this).toBe(object);
             }
@@ -40,9 +41,9 @@ describe('add', function() {
         done();
     });
 
-    it('should preserve scope (2)', function (done) {
+    it('should preserve scope (2)', function(done) {
         var object = {},
-            callback = function (data) {
+            callback = function(data) {
                 expect(data).toEqual('data');
                 expect(this).toBe(object);
             };
@@ -56,7 +57,7 @@ describe('add', function() {
 });
 
 describe('once', function() {
-    it('should call callback once', function (done) {
+    it('should call callback once', function(done) {
         var count = 0,
             callback = function() {
                 count++;
@@ -164,14 +165,17 @@ describe('remove', function() {
 });
 
 describe('buffer', function() {
-    it('should call only last event', function(done) {
+    function spyFire(callbacks) {
         var passedArgs = [];
-
-        var callbacks = new Callbacks();
-
         callbacks.add(function() {
             passedArgs.push(_.toArray(arguments));
         });
+        return passedArgs;
+    }
+
+    it('should call only last event', function(done) {
+        var callbacks = new Callbacks();
+        var passedArgs = spyFire(callbacks);
 
         callbacks.buffer(function() {
             callbacks.fire(1, 2);
@@ -184,13 +188,8 @@ describe('buffer', function() {
     });
 
     it('should fire events normally after exiting', function(done) {
-        var passedArgs = [];
-
         var callbacks = new Callbacks();
-
-        callbacks.add(function() {
-            passedArgs.push(_.toArray(arguments));
-        });
+        var passedArgs = spyFire(callbacks);
 
         callbacks.buffer(function() {
             callbacks.fire(100, 200);
@@ -202,12 +201,8 @@ describe('buffer', function() {
     });
 
     it('should fire last event before exception', function(done) {
-        var passedArgs = [];
         var callbacks = new Callbacks();
-
-        callbacks.add(function() {
-            passedArgs.push(_.toArray(arguments));
-        });
+        var passedArgs = spyFire(callbacks);
 
         try {
             callbacks.buffer(function() {
@@ -219,17 +214,13 @@ describe('buffer', function() {
 
         }
 
-        expect(passedArgs).toEqual([[10, 20]]);//, 'Last event before error is fired');
+        expect(passedArgs).toEqual([[10, 20]]);
         done();
     });
 
     it('should fire events outside buffer ended with exception', function(done) {
-        var passedArgs = [];
         var callbacks = new Callbacks();
-
-        callbacks.add(function() {
-            passedArgs.push(_.toArray(arguments));
-        });
+        var passedArgs = spyFire(callbacks);
 
         try {
             callbacks.buffer(function() {
@@ -242,7 +233,17 @@ describe('buffer', function() {
 
         callbacks.fire(100, 200);
 
-        expect(passedArgs).toEqual([[10, 20], [100, 200]]);//, 'Events outside buffer are still fired after exception');
+        expect(passedArgs).toEqual([[10, 20], [100, 200]]);
+        done();
+    });
+
+    it('should not fire events when buffered function did not fire', function(done) {
+        var callbacks = new Callbacks();
+        var passedArgs = spyFire(callbacks);
+
+        callbacks.buffer(_.noop);
+
+        expect(passedArgs).toEqual([]);
         done();
     });
 });
