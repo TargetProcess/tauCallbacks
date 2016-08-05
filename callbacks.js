@@ -87,6 +87,9 @@
 
         /**
          * Unsubscribe. Remove handler or entire scope.
+         * - callbacks.remove(handler, scope) - remove handler with exactly that scope
+         * - callbacks.remove(handler) - remove handler with undefined scope
+         * - callbacks.remove(scope) - remove all handlers with that scope
          *
          * @param {Function} [handler]
          * @param {Object} [scope]
@@ -107,13 +110,21 @@
             return this;
         },
 
+        /**
+         * Perform operation `f` which calls `fire()` multiple times, and then call `fire()` only once.
+         * Sort of `debounce`.
+         *
+         * @param {Function} f
+         * @param {Object} [scope]
+         * @returns {*}
+         */
         buffer: function(f, scope) {
             this._bufferEntries++;
             try {
                 return f.call(scope);
             } finally {
                 this._bufferEntries--;
-                if (this._bufferEntries === 0) {
+                if (this._bufferEntries === 0 && this._bufferArguments !== null) {
                     this.fire.apply(this, this._bufferArguments);
                     this._bufferArguments = null;
                 }
